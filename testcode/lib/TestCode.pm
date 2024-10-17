@@ -1,6 +1,6 @@
 package TestCode;
 
-use Mojo::Base 'Mojolicious', -signatures;
+use Mojo::Base qw(Mojolicious -signatures);
 
 sub startup ($self) {
 	$self->config("hypnotoad" => {

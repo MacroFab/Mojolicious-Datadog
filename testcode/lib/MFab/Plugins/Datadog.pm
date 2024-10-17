@@ -4,13 +4,13 @@ package MFab::Plugins::Datadog;
 
 =head1 NAME
 
-TestCode - Testing sending APM traces to Datadog in Mojolicious
+MFab::Plugins::Datadog - Testing sending APM traces to Datadog in Mojolicious
 
 =head1 NOTES
 
 If the worker is killed through a heartbeat failure, the spans for that worker won't be sent
 
-Websockets generate just a mojolicious-transaction span
+Websockets only generate a mojolicious-transaction span
 
 =cut
 
@@ -126,7 +126,7 @@ sub afterDispatchHook ($c) {
 
 =item afterBuildTxHook()
 
-The after_build_tx hook
+The after_build_tx hook - called after the transaction is built but before it is parsed
 
 =cut
 
@@ -174,9 +174,9 @@ sub register ($self, $app, $args) {
 	}
 }
 
-=item startSpan($tx, $name)
+=item startSpan($tx, $name, $resource, [$parent_id])
 
-Start a new span
+Start a new span, associates it to the transaction via $tx
 
 =cut
 
@@ -249,7 +249,7 @@ sub durationToDatadog ($duration) {
 	return int($duration * 1000000000);
 }
 
-=item submitDatadog()
+=item submitDatadog($app, $connection_data, $args)
 
 Submit spans to datadog agent
 
