@@ -1,4 +1,4 @@
-package MFab::Plugins::Datadog;
+package MFab::Plugins::Datadog 1.0;
 
 =encoding utf8
 
