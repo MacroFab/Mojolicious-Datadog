@@ -4,7 +4,34 @@ package MFab::Plugins::Datadog 1.0;
 
 =head1 NAME
 
-MFab::Plugins::Datadog - Testing sending APM traces to Datadog in Mojolicious
+MFab::Plugins::Datadog - Mojolicious plugin for Datadog APM integration
+
+=head1 SYNOPSIS
+
+    # In your Mojolicious application
+    $app->plugin('Datadog', {
+        enabled => "true",
+        service => "MyApp",
+        serviceEnv => "production"
+    });
+
+=head1 DESCRIPTION
+
+This module provides seamless integration between Mojolicious web applications and Datadog's Application Performance Monitoring (APM) system. It automatically instruments your Mojolicious application to send distributed traces and metrics to Datadog, giving you visibility into:
+
+=over 4
+
+=item * HTTP request/response cycles
+
+=item * Route matching and dispatch timing
+
+=item * Controller action execution
+
+=item * Custom application spans
+
+=back
+
+The plugin automatically propagates trace context across service boundaries using Datadog's trace headers, enabling distributed tracing across your microservices architecture.
 
 =head1 NOTES
 

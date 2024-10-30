@@ -1,6 +1,15 @@
 # Mojolicious::Plugin::Datadog
 
-Mojolicious::Plugin::Datadog is a plugin for the Mojolicious web framework that integrates with Datadog for monitoring and metrics.
+A comprehensive Mojolicious plugin that provides deep integration with Datadog's Application Performance Monitoring (APM) system. This plugin automatically instruments your Mojolicious applications to provide detailed performance insights and distributed tracing capabilities.
+
+## Key Features
+
+- **Automatic Request Tracing**: Every HTTP request is automatically traced with detailed timing information
+- **Distributed Tracing**: Seamlessly propagates trace context across service boundaries
+- **Custom Span Support**: API for adding custom spans to track specific operations
+- **Real-time Metrics**: Monitor application performance in real-time through Datadog's dashboard
+- **Zero-Configuration**: Works out of the box with sensible defaults
+- **Production Ready**: Battle-tested in production environments
 
 ## Installation
 
