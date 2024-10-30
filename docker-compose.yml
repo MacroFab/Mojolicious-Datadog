@@ -2,7 +2,7 @@ name: testcode
 
 services:
   testcode:
-    image: perlserver:latest
+    build: .
     ports:
       - 4301:4301
     volumes:
@@ -13,5 +13,3 @@ services:
       - MOJO_INACTIVITY_TIMEOUT=600
       - DD_TRACE_ENABLED=false
       - DD_INSTRUMENTATION_TELEMETRY_ENABLED=false
-
-    command: /var/mfab/apps/testcode/run.sh
