@@ -1,4 +1,4 @@
-# Mojolicious::Plugin::Datadog
+# MFab::Plugin::Datadog
 
 A comprehensive Mojolicious plugin that provides deep integration with Datadog's Application Performance Monitoring (APM) system. This plugin automatically instruments your Mojolicious applications to provide detailed performance insights and distributed tracing capabilities.
 
