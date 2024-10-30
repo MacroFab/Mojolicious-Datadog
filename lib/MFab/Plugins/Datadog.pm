@@ -9,6 +9,8 @@ MFab::Plugins::Datadog - Mojolicious plugin for Datadog APM integration
 =head1 SYNOPSIS
 
     # In your Mojolicious application
+    push(@{ $self->plugins->namespaces }, 'MFab::Plugins');
+
     $app->plugin('Datadog', {
         enabled => "true",
         service => "MyApp",
@@ -33,11 +35,29 @@ This module provides seamless integration between Mojolicious web applications a
 
 The plugin automatically propagates trace context across service boundaries using Datadog's trace headers, enabling distributed tracing across your microservices architecture.
 
+=head1 CUSTOM SPANS
+
+When you want to measure a specific function, you can use the startSpan/endSpan functions to mark the start and end points:
+
+    sub customHandler {
+        my($c) = @_;
+        my $span = startSpan($c->tx, "TestCode::customHandler", "customHandler");
+        # do work here
+        sleep(10);
+        endSpan($span);
+    }
+
 =head1 NOTES
 
-If the worker is killed through a heartbeat failure, the spans for that worker won't be sent
+=over 4
 
-Websockets only generate a mojolicious-transaction span
+=item * If the worker is killed through a heartbeat failure, the spans for that worker won't be sent
+
+=item * Websockets only generate a mojolicious-transaction span
+
+=back
+
+=head1 FUNCTIONS
 
 =cut
 
@@ -52,6 +72,42 @@ our @EXPORT_OK = qw(startSpan endSpan);
 
 # Keep track of all outstanding transactions
 my(%transactions);
+
+=head2 register()
+
+Register Mojolicious plugin and hook into the application - called by the Mojolicious framework
+
+It accepts the following config items
+
+=over 4
+
+=item * "datadogHost" - the datadog agent host, also looks in the ENV for "DD_AGENT_HOST", defaults to "localhost"
+
+=item * "enabled" - if "true", traces are sent to datadog, also looks in the ENV for "DD_TRACE_ENABLED", defaults to "false"
+
+=item * "service" - the value to send to datadog for the service name, defaults to "MFab::Plugins::Datadog"
+
+=item * "serviceEnv" - the value to send to datadog for the service environment, defaults to "test"
+
+=back
+
+=cut
+
+sub register ($self, $app, $args) {
+	if(not $args->{service}) {
+		$args->{service} = "MFab::Plugins::Datadog";
+	}
+	$args->{datadogHost} = configItem($args->{datadogHost}, "DD_AGENT_HOST", "localhost");
+	$args->{enabled} = configItem($args->{enabled}, "DD_TRACE_ENABLED", "false") eq "true";
+	$args->{datadogURL} = "http://".$args->{datadogHost}.":8126/v0.3/traces";
+	$args->{serviceEnv} = $args->{serviceEnv} || "test";
+
+	if($args->{enabled}) {
+		$app->hook(around_action => \&aroundActionHook);
+		$app->hook(after_dispatch => \&afterDispatchHook);
+		$app->hook(after_build_tx => sub ($tx, $app) { afterBuildTxHook($tx, $app, $args) });
+	}
+}
 
 =head2 datadogId()
 
@@ -177,28 +233,6 @@ sub afterBuildTxHook ($tx, $app, $args) {
 		submitDatadog($app, $connection_data, $args);
 		$transactions{$tx} = undef;
 	});
-}
-
-=head2 register()
-
-Register Mojolicious plugin and hook into the application
-
-=cut
-
-sub register ($self, $app, $args) {
-	if(not $args->{service}) {
-		$args->{service} = "MFab::Plugins::Datadog";
-	}
-	$args->{datadogHost} = configItem($args->{datadogHost}, "DD_AGENT_HOST", "localhost");
-	$args->{enabled} = configItem($args->{enabled}, "DD_TRACE_ENABLED", "false") eq "true";
-	$args->{datadogURL} = "http://".$args->{datadogHost}.":8126/v0.3/traces";
-	$args->{serviceEnv} = $args->{serviceEnv} || "test";
-
-	if($args->{enabled}) {
-		$app->hook(around_action => \&aroundActionHook);
-		$app->hook(after_dispatch => \&afterDispatchHook);
-		$app->hook(after_build_tx => sub ($tx, $app) { afterBuildTxHook($tx, $app, $args) });
-	}
 }
 
 =head2 startSpan($tx, $name, $resource, [$parent_id])
