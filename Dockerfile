@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM alpine:3.20
 
 # Install perl and required system dependencies
 RUN apk add --no-cache \
@@ -10,20 +10,16 @@ RUN apk add --no-cache \
     musl-dev \
     gmp-dev
 
-# Install required Perl modules
-RUN cpanm --notest \
-    Mojo::Base \
-    Time::HiRes \
-    Crypt::Random \
-    Math::Pari
-
 # Set working directory
 WORKDIR /app
 
 # Copy application files
 COPY . .
 
-# Install module dependencies
+# Install dependencies
+RUN cpanm --installdeps .
+
+# Build Module
 RUN perl Makefile.PL && make && make install
 
 # Default command
