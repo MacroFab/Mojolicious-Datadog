@@ -69,7 +69,7 @@ sub request ($c) {
 }
 ```
 
-By default, the parent is associated with the active Mojolicious hook spans. You can also pass in a span to startSpan to use as the parent if you have 
+By default, the parent is associated with the active Mojolicious hook spans. You can also pass in a span to startSpan to use as the parent if you have one
 
 ## Contributing
 
