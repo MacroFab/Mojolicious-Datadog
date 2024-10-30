@@ -17,7 +17,7 @@ See the `example/` directory
 
 ## Installation
 
-`perl Makefile.PL && make install`
+`cpanm --installdeps . && perl Makefile.PL && make install`
 
 ## Usage
 
