@@ -26,7 +26,7 @@ our @EXPORT_OK = qw(startSpan endSpan);
 # Keep track of all outstanding transactions
 my(%transactions);
 
-=item datadogId()
+=head2 datadogId()
 
 Generate a 64 bit integer that JSON::XS will serialize as an integer
 
@@ -37,7 +37,7 @@ sub datadogId () {
 	return Math::Pari::pari2iv($id);
 }
 
-=item configItem($config_host)
+=head2 configItem($config_host)
 
 Get the config item from: the app setting, the environment variable, or use the default
 
@@ -50,7 +50,7 @@ sub configItem ($appSetting, $envName, $default) {
 	return $appSetting;
 }
 
-=item setTraceId($c, $connection_data)
+=head2 setTraceId($c, $connection_data)
 
 Set the traceid in the connection data
 
@@ -70,7 +70,7 @@ sub setTraceId ($tx, $connection_data) {
 	}
 }
 
-=item aroundActionHook()
+=head2 aroundActionHook()
 
 The around_action hook - wrapped around the action
 
@@ -104,7 +104,7 @@ sub aroundActionHook ($next, $c, $action, $last) {
 	return $retval;
 }
 
-=item afterDispatchHook()
+=head2 afterDispatchHook()
 
 The after_dispatch hook - called after the request is finished the sync stage of processing, more async processing can happen after this
 
@@ -124,7 +124,7 @@ sub afterDispatchHook ($c) {
 	$connection_data->{dispatch_duration} = tv_interval($connection_data->{action_start});
 }
 
-=item afterBuildTxHook()
+=head2 afterBuildTxHook()
 
 The after_build_tx hook - called after the transaction is built but before it is parsed
 
@@ -152,7 +152,7 @@ sub afterBuildTxHook ($tx, $app, $args) {
 	});
 }
 
-=item register()
+=head2 register()
 
 Register Mojolicious plugin and hook into the application
 
@@ -174,7 +174,7 @@ sub register ($self, $app, $args) {
 	}
 }
 
-=item startSpan($tx, $name, $resource, [$parent_id])
+=head2 startSpan($tx, $name, $resource, [$parent_id])
 
 Start a new span, associates it to the transaction via $tx
 
@@ -201,7 +201,7 @@ sub startSpan ($tx, $name, $resource, $parent_id = undef) {
 	return $span;
 }
 
-=item endSpan($span, [$error_message])
+=head2 endSpan($span, [$error_message])
 
 End a span, optional error message
 
@@ -223,7 +223,7 @@ sub endSpan ($span, $error_message = undef) {
 	}
 }
 
-=item timestampToDatadog($timestamp)
+=head2 timestampToDatadog($timestamp)
 
 Datadog wants number of nanoseconds since the epoch
 
@@ -236,7 +236,7 @@ sub timestampToDatadog ($timestamp) {
 	return $timestamp->[0] * 1000000000 + $timestamp->[1] * 1000;
 }
 
-=item durationToDatadog($duration)
+=head2 durationToDatadog($duration)
 
 Datadog wants duration in nanoseconds
 
@@ -249,7 +249,7 @@ sub durationToDatadog ($duration) {
 	return int($duration * 1000000000);
 }
 
-=item submitDatadog($app, $connection_data, $args)
+=head2 submitDatadog($app, $connection_data, $args)
 
 Submit spans to datadog agent
 
