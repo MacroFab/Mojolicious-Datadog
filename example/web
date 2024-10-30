@@ -2,13 +2,9 @@
 
 use Mojo::Base -strict;
 
-use Mojo::JSON_XS;
 use Mojo::JSON qw(encode_json decode_json false true from_json to_json j);
 
 use File::Basename 'dirname';
-use File::Spec;
-
-use lib join '/', File::Spec->splitdir(dirname(__FILE__)), 'lib';
 
 # Check if Mojolicious is installed;
 die <<EOF unless eval 'use Mojolicious::Commands; 1';

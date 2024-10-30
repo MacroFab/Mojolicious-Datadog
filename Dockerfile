@@ -13,8 +13,9 @@ RUN apk add --no-cache \
 # Set working directory
 WORKDIR /app
 
-# Copy application files
-COPY . .
+# application files
+COPY Makefile.PL .
+COPY lib lib
 
 # Install dependencies
 RUN cpanm --installdeps .
@@ -22,5 +23,9 @@ RUN cpanm --installdeps .
 # Build Module
 RUN perl Makefile.PL && make && make install
 
+# Copy example application
+COPY example example
+
 # Default command
-CMD ["perl", "-MMFab::Plugins::Datadog", "-e1"]
+CMD ["/app/example/run.sh"]
+EXPOSE 4301

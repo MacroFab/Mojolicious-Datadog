@@ -1,6 +1,7 @@
 package TestCode;
 
 use Mojo::Base qw(Mojolicious -signatures);
+use MFab::Plugins::Datadog qw(startSpan endSpan);
 
 sub startup ($self) {
 	$self->config("hypnotoad" => {
@@ -10,7 +11,6 @@ sub startup ($self) {
 
 	push(@{ $self->plugins->namespaces }, 'MFab::Plugins');
 
-	$self->plugin('AccessLog' => { 'format' => '%a %l %u %t "%m %U %H" %s %b "%{Referer}i" "%{User-agent}i" %P' });
 	$self->plugin("Datadog");
 
 	my $routes = $self->routes;
@@ -36,11 +36,18 @@ sub startup ($self) {
 		});
 	});
 	$routes->get("/loopget")->to(cb => sub ($c) {
-		$c->app->ua->get("http://localhost/" => sub ($ua, $tx) {
+		$c->app->ua->get("http://localhost:4301/" => sub ($ua, $tx) {
 			$c->render(text => $tx->res->body);
 		});
 	});
+	$routes->get("/recurse-sleep")->to(cb => sub ($c) {
+                my $url = "http://localhost:4301/sleep10-async";
+                my $span = startSpan($c->tx, "subrequest", $url);
+		$c->app->ua->get($url => sub ($ua, $tx) {
+			$c->render(text => $tx->res->body);
+                        endSpan($span);
+		});
+	});
 }
-
 
 1;
