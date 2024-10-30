@@ -1,23 +1,23 @@
 use strict;
 use warnings;
 use Test::More;
-use JSON::XS;
-use MFab::Plugins::Datadog qw(datadogId);
+use Mojo::JSON qw(encode_json);
+use MFab::Plugins::Datadog;
 
 # Test that datadogId returns a value
-my $id = datadogId();
+my $id = MFab::Plugins::Datadog::datadogId();
 ok(defined $id, 'datadogId returns a defined value');
 
 # Test that the value is a number
 like($id, qr/^-?\d+$/, 'datadogId returns a numeric value');
 
-# Test JSON::XS serialization
-my $json = JSON::XS->new->encode({ id => $id });
+# Test Mojo::JSON serialization
+my $json = encode_json({ id => $id });
 like($json, qr/"id":-?\d+/, 'JSON encoded without quotes around the number');
 unlike($json, qr/"id":"-?\d+"/, 'JSON encoded without string quotes');
 
 # Test multiple calls produce different values
-my $id2 = datadogId();
+my $id2 = MFab::Plugins::Datadog::datadogId();
 isnt($id, $id2, 'Multiple calls produce different values');
 
 done_testing();
