@@ -1,7 +1,8 @@
-name: testcode
+version: '3.8'
 
 services:
   testcode:
+    container_name: testcode
     build: .
     ports:
       - 4301:4301
