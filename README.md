@@ -11,9 +11,13 @@ A comprehensive Mojolicious plugin that provides deep integration with Datadog's
 - **Zero-Configuration**: Works out of the box with sensible defaults
 - **Production Ready**: Battle-tested in production environments
 
+## Example webserver
+
+See the `example/` directory
+
 ## Installation
 
-[TODO]
+`perl Makefile.PL && make install`
 
 ## Usage
 
