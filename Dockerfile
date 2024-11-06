@@ -18,10 +18,7 @@ COPY Makefile.PL .
 COPY lib lib
 
 # Install dependencies
-RUN cpanm --installdeps .
-
-# Build Module
-RUN perl Makefile.PL && make && make install
+RUN cpanm --install .
 
 # Copy example application
 COPY example example
